@@ -19,7 +19,7 @@ def login():
             s['user_id']=userid
             s['user_name']= username
             s['password'] = pswd
-            return redirect(url_for('home'))
+            return "Logged in successfully"
         else:
             msg = 'Incorrect username/password!'
     return "Incorrect username/password"
