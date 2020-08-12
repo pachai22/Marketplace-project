@@ -1,8 +1,7 @@
 from flask import Flask, request,jsonify,render_template,url_for,session as s
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import session
 from werkzeug.utils import redirect
-from entities import User,Category,validate_credentials,Item,Cart,formatted_list
-from db_connection import connect_db
+from methods import validate_credentials,get_category_list,get_items_list,formatted_cart_details,insert_into_cart,update_quantity,delete_item
 app = Flask(__name__)
 app.secret_key= 'super_secret_key'
 
@@ -12,14 +11,14 @@ def login():
     if  'username' in request.form and 'password' in request.form:
         username = request.form['username']
         pswd = request.form['password']
-        details = session.query(User).all()
-        (result,userid) = validate_credentials(username,pswd,details)
+        (result,userid) = validate_credentials(username,pswd)
         if result == True:
             s['logged in'] = True
             s['user_id']=userid
             s['user_name']= username
             s['password'] = pswd
             return "Logged in successfully"
+            #return redirect(url_for('home'))
         else:
             msg = 'Incorrect username/password!'
     return "Incorrect username/password"
@@ -27,43 +26,19 @@ def login():
 
 @app.route('/categories',methods=['GET'])
 def home():
-    c_list=[]
-    categories = session.query(Category).all()
-    for category in categories:
-        c_list.append(category.category_type)
+    c_list=get_category_list()
     return jsonify(c_list)
-
 
 @app.route('/categories/<id>',methods=['GET'])
 def list_items(id):
-    item_list=[]
     category_id = id
-    category = session.query(Category).filter_by(category_id = category_id).first()
-    item = category.items
-    for detail in item:
-        item_list.append(detail.name)
+    item_list = get_items_list(category_id)
     return jsonify(item_list)
 
 @app.route('/cart/<id>',methods=['GET'])
 def get_cart_details(id):
-    result =[]
-    product_list=[]
     user_id = id
-    user = session.query(User).filter_by(user_id = user_id).first()
-    print(user.user_name)
-    products = session.query(Cart).filter_by(user_id=user_id)
-    for product in products:
-        product_list.append(product.item_id)
-    print(product_list)
-    items = session.query(Item).all()
-    for item in items:
-        print(item.id)
-        if item.id in product_list:
-            seller_id = item.seller_id
-            quantity = session.query(Cart).filter_by(user_id=user_id,item_id = item.id).first()
-            seller = session.query(User).filter_by(user_id=seller_id).first()
-            result.append(formatted_list(item,seller,quantity))
-            print(result)
+    result = formatted_cart_details(user_id)
     return jsonify(result)
 
 @app.route('/cart/<id>',methods=['POST'])
@@ -71,40 +46,30 @@ def add_to_cart(id):
     user_id = id
     product_id = request.form['item_id']
     quantity = request.form['desired_quantity']
-    available_stock = session.query(Item).filter_by(id = product_id).first()
-    available_quantity=available_stock.quantity
-    if available_quantity < int(quantity):
-        return "stock unavailable"
-    else:
-        product= Cart(user_id=user_id,item_id = product_id,desired_quantity=quantity)
-        session.add(product)
-        session.commit()
+    result=insert_into_cart(product_id,quantity,user_id)
+    if result== True:
         return "Added to cart successfully"
+    else:
+        return "Stock unavailable"
+
 
 @app.route('/cart/<id>',methods= ['PUT'])
 def update_cart_details(id):
     user_id = id
     product_id = request.form['item_id']
     quantity = request.form['desired_quantity']
-    product = session.query(Cart).filter_by(user_id = user_id,item_id = product_id).one()
-    product.item_id = product_id
-    product.desired_quantity = quantity
-    session.add(product)
-    session.commit()
-    return "Updated successfully"
+    result = update_quantity(user_id,product_id,quantity)
+    if result == True:
+        return "Updated successfully"
 
 @app.route('/cart/<id>',methods=['DELETE'])
 def remove_item(id):
     flag = 1
     user_id = id
     product_id = request.form['item_id']
-    product = session.query(Cart).filter_by(user_id=user_id,item_id = product_id).one()
-    session.delete(product)
-    session.commit()
-    #if flag == 1:
-        #return "false"
-    #else:
-    return "Deleted successfully"
+    result = delete_item(user_id,product_id)
+    if result == True:
+        return "Deleted successfully"
 
 @app.route('/logout')
 def logout():
@@ -114,9 +79,5 @@ def logout():
     s.pop('user_id',None)
     return "logged out successfully"
 
-db = connect_db()
-Session = sessionmaker(bind=db)
-session = Session()
-print("Database connected successfully")
 if __name__ == "__main__":
     app.run(debug=True)
