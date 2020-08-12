@@ -25,7 +25,7 @@ def login():
     return "Incorrect username/password"
     #return render_template('login.html', msg=msg)
 
-@app.route('/home',methods=['GET'])
+@app.route('/categories',methods=['GET'])
 def home():
     c_list=[]
     categories = session.query(Category).all()
@@ -34,7 +34,7 @@ def home():
     return jsonify(c_list)
 
 
-@app.route('/home/<id>',methods=['GET'])
+@app.route('/categories/<id>',methods=['GET'])
 def list_items(id):
     item_list=[]
     category_id = id
