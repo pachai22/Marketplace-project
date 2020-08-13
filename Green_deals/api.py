@@ -1,5 +1,4 @@
 from flask import Flask, request,jsonify,render_template,url_for,session as s
-from sqlalchemy.orm import session
 from werkzeug.utils import redirect
 from methods import validate_credentials,get_category_list,get_items_list,formatted_cart_details,insert_into_cart,update_quantity,delete_item
 app = Flask(__name__)
@@ -8,9 +7,10 @@ app.secret_key= 'super_secret_key'
 @app.route('/login',methods = ['GET','POST'])
 def login():
     msg = ' '
-    if  'username' in request.form and 'password' in request.form:
-        username = request.form['username']
-        pswd = request.form['password']
+    if  request.method == 'POST':
+        request_data = request.get_json()
+        username = request_data['username']
+        pswd = request_data['password']
         (result,userid) = validate_credentials(username,pswd)
         if result == True:
             s['logged in'] = True
@@ -45,8 +45,9 @@ def get_cart_details(id):
 @app.route('/cart/<id>',methods=['POST'])
 def add_to_cart(id):
     user_id = id
-    product_id = request.form['item_id']
-    quantity = request.form['desired_quantity']
+    request_data = request.get_json()
+    product_id = request_data['item_id']
+    quantity = request_data['desired_quantity']
     result=insert_into_cart(product_id,quantity,user_id)
     if result== True:
         return "Added to cart successfully"
@@ -57,17 +58,18 @@ def add_to_cart(id):
 @app.route('/cart/<id>',methods= ['PUT'])
 def update_cart_details(id):
     user_id = id
-    product_id = request.form['item_id']
-    quantity = request.form['desired_quantity']
+    request_data = request.get_json()
+    product_id = request_data['item_id']
+    quantity = request_data['desired_quantity']
     result = update_quantity(user_id,product_id,quantity)
     if result == True:
         return "Updated successfully"
 
 @app.route('/cart/<id>',methods=['DELETE'])
 def remove_item(id):
-    flag = 1
     user_id = id
-    product_id = request.form['item_id']
+    request_data = request.get_json()
+    product_id = request_data['item_id']
     result = delete_item(user_id,product_id)
     if result == True:
         return "Deleted successfully"
