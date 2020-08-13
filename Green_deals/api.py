@@ -33,6 +33,7 @@ def home():
 def list_items(id):
     category_id = id
     item_list = get_items_list(category_id)
+    print(item_list)
     return jsonify(item_list)
 
 @app.route('/cart/<id>',methods=['GET'])

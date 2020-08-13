@@ -21,15 +21,25 @@ def get_category_list():
     c_list = []
     categories = session.query(Category).all()
     for category in categories:
-        c_list.append(category.category_type)
+        dict = {}
+        dict['category_id'] = category.category_id
+        dict['category_type'] = category.category_type
+        c_list.append(dict)
     return c_list
 
 def get_items_list(category_id):
     item_list =[]
     category = session.query(Category).filter_by(category_id=category_id).first()
     item = category.items
+    print(item)
     for detail in item:
-        item_list.append(detail.name)
+        dict ={}
+        dict['item_id'] = detail.id
+        print(detail.id)
+        dict['item_name'] = detail.name
+        dict['item-price'] = int(detail.price)
+        dict['available_quantity'] = detail.quantity
+        item_list.append(dict)
     return item_list
 
 def formatted_cart_details(user_id):
@@ -53,7 +63,12 @@ def formatted_cart_details(user_id):
     return result
 
 def formatted_list(row,user,quantity):
-    return "Product-name : "+str(row.name)+" Product-price : "+str(row.price)+" Quantity : "+str(quantity.desired_quantity)+" Seller-name : "+str(user.user_name)
+    dict ={}
+    dict['Product-name'] = row.name
+    dict['Product-price'] = int(row.price)
+    dict['Quantity'] = quantity.desired_quantity
+    dict['seller-name'] = user.user_name
+    return dict
 
 def insert_into_cart(product_id,quantity,user_id):
     available_stock = session.query(Item).filter_by(id=product_id).first()
