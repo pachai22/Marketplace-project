@@ -1,10 +1,10 @@
-from flask import Flask, request,jsonify,render_template,url_for,session as s
+from flask import Flask, request,jsonify,abort,render_template,url_for,session as s
 from werkzeug.utils import redirect
-from methods import validate_credentials,get_category_list,get_items_list,formatted_cart_details,insert_into_cart,update_quantity,delete_item
+from methods import validate_credentials,get_category_list,get_items_list,formatted_cart_details,insert_into_cart,update_quantity,delete_item,check_valid_user
 app = Flask(__name__)
 app.secret_key= 'super_secret_key'
 
-@app.route('/login',methods = ['GET','POST'])
+@app.route('/login',methods = ['POST'])
 def login():
     msg = ' '
     if  request.method == 'POST':
@@ -20,8 +20,9 @@ def login():
             return "Logged in successfully"
             #return redirect(url_for('home'))
         else:
-            msg = 'Incorrect username/password!'
-    return "Incorrect username/password"
+            abort(401)
+            #msg = 'Incorrect username/password!'
+    #return "Incorrect username/password"
     #return render_template('login.html', msg=msg)
 
 @app.route('/categories',methods=['GET'])
@@ -39,42 +40,58 @@ def list_items(id):
 @app.route('/cart/<id>',methods=['GET'])
 def get_cart_details(id):
     user_id = id
-    result = formatted_cart_details(user_id)
-    return jsonify(result)
+    valid = check_valid_user(user_id,s['user_id'])
+    if valid == True:
+        result = formatted_cart_details(user_id)
+        return jsonify(result)
+    else:
+        abort(403)
+        #return "Unauthorized user"
 
 @app.route('/cart/<id>',methods=['POST'])
 def add_to_cart(id):
     user_id = id
     request_data = request.get_json()
-    product_id = request_data['item_id']
-    quantity = request_data['desired_quantity']
-    result=insert_into_cart(product_id,quantity,user_id)
-    if result== True:
-        return "Added to cart successfully"
+    valid = check_valid_user(user_id,s['user_id'])
+    if valid == True:
+        product_id = request_data['item_id']
+        quantity = request_data['desired_quantity']
+        result=insert_into_cart(product_id,quantity,user_id)
+        if result== True:
+            return "Added to cart successfully"
+        else:
+            return "Stock unavailable"
     else:
-        return "Stock unavailable"
-
+        abort(403)
 
 @app.route('/cart/<id>',methods= ['PUT'])
 def update_cart_details(id):
     user_id = id
     request_data = request.get_json()
-    product_id = request_data['item_id']
-    quantity = request_data['desired_quantity']
-    result = update_quantity(user_id,product_id,quantity)
-    if result == True:
-        return "Updated successfully"
+    valid = check_valid_user(user_id,s['user_id'])
+    if valid == True:
+        product_id = request_data['item_id']
+        quantity = request_data['desired_quantity']
+        result = update_quantity(user_id,product_id,quantity)
+        if result == True:
+            return "Updated successfully"
+    else:
+        abort(403)
 
 @app.route('/cart/<id>',methods=['DELETE'])
 def remove_item(id):
     user_id = id
     request_data = request.get_json()
-    product_id = request_data['item_id']
-    result = delete_item(user_id,product_id)
-    if result == True:
-        return "Deleted successfully"
+    valid = check_valid_user(user_id,s['user_id'])
+    if valid == True:
+        product_id = request_data['item_id']
+        result = delete_item(user_id,product_id)
+        if result == True:
+            return "Deleted successfully"
+    else:
+        abort(403)
 
-@app.route('/logout')
+@app.route('/logout',methods=['GET'])
 def logout():
     s.pop('logged in',None)
     s.pop('user_name',None)

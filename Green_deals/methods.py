@@ -1,21 +1,15 @@
-from db_connection import connect_db
-from entities import User,Category,Item,Cart
+from db import connect_db
+from models import User,Category,Item,Cart,Seller
 
 session = connect_db()
 
 def validate_credentials(username,pswd):
-    flag =0
-    userid = " "
-    details = session.query(User).all()
-    for row in details:
-        print(row.user_name)
-        if row.user_name == username and row.password == pswd:
-            userid=row.user_id
-            flag = 1
-    if flag == 1:
-        return True,userid
+    print(username,pswd)
+    details = session.query(User).filter_by(user_name = username,password = pswd).first()
+    if details != None:
+        return True,details.user_id
     else:
-        return False,userid
+        return False,username
 
 def get_category_list():
     c_list = []
@@ -42,32 +36,38 @@ def get_items_list(category_id):
         item_list.append(dict)
     return item_list
 
+def check_valid_user(user_id,current_user):
+    print(user_id,current_user)
+    if int(current_user) == int(user_id) :
+        print(current_user,user_id)
+        return True
+    else:
+        return False
+
 def formatted_cart_details(user_id):
     result = []
     product_list = []
     user = session.query(User).filter_by(user_id=user_id).first()
-    print(user.user_name)
     products = session.query(Cart).filter_by(user_id=user_id)
     for product in products:
         product_list.append(product.item_id)
-    print(product_list)
     items = session.query(Item).all()
     for item in items:
         print(item.id)
         if item.id in product_list:
             seller_id = item.seller_id
             quantity = session.query(Cart).filter_by(user_id=user_id, item_id=item.id).first()
-            seller = session.query(User).filter_by(user_id=seller_id).first()
+            seller = session.query(Seller).filter_by(id=seller_id).first()
             result.append(formatted_list(item, seller, quantity))
             print(result)
     return result
 
-def formatted_list(row,user,quantity):
+def formatted_list(row,seller,quantity):
     dict ={}
     dict['Product-name'] = row.name
-    dict['Product-price'] = int(row.price)
+    dict['Product-price'] = int(row.price) * quantity.desired_quantity
     dict['Quantity'] = quantity.desired_quantity
-    dict['seller-name'] = user.user_name
+    dict['seller-name'] = seller.name
     return dict
 
 def insert_into_cart(product_id,quantity,user_id):

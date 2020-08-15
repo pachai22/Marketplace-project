@@ -9,7 +9,6 @@ class User(Base):
     user_id = Column(Integer,primary_key=True)
     user_name = Column(String)
     password = Column(String)
-    item = relationship('Item',backref='User')
     cart = relationship('Cart',backref='User')
 
 class Category(Base):
@@ -24,9 +23,15 @@ class Item(Base):
     category_id = Column(Integer,ForeignKey('categories.category_id'))
     name = Column(String)
     price = Column(Integer)
-    seller_id = Column(Integer,ForeignKey('users.user_id'))
+    seller_id = Column(Integer,ForeignKey('seller.id'))
     quantity = Column(Integer)
     ids = relationship('Cart',backref='Item')
+
+class Seller(Base):
+    __tablename__ = 'seller'
+    id = Column(Integer,primary_key=True)
+    name = Column(String)
+    item = relationship('Item', backref='Seller')
 
 class Cart(Base):
     __tablename__= 'cart'
