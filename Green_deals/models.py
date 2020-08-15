@@ -9,7 +9,7 @@ class User(Base):
     user_id = Column(Integer,primary_key=True)
     user_name = Column(String)
     password = Column(String)
-    cart = relationship('Cart',backref='User')
+
 
 class Category(Base):
     __tablename__ = 'categories'
@@ -31,7 +31,7 @@ class Seller(Base):
     __tablename__ = 'seller'
     id = Column(Integer,primary_key=True)
     name = Column(String)
-    item = relationship('Item', backref='Seller')
+
 
 class Cart(Base):
     __tablename__= 'cart'

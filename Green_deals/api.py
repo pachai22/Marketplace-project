@@ -6,27 +6,23 @@ app.secret_key= 'super_secret_key'
 
 @app.route('/login',methods = ['POST'])
 def login():
-    msg = ' '
-    if  request.method == 'POST':
-        request_data = request.get_json()
-        username = request_data['username']
-        pswd = request_data['password']
-        (result,userid) = validate_credentials(username,pswd)
-        if result == True:
-            s['logged in'] = True
-            s['user_id']=userid
-            s['user_name']= username
-            s['password'] = pswd
-            return "Logged in successfully"
-            #return redirect(url_for('home'))
-        else:
-            abort(401)
-            #msg = 'Incorrect username/password!'
-    #return "Incorrect username/password"
-    #return render_template('login.html', msg=msg)
+    request_data = request.get_json()
+    username = request_data['username']
+    pswd = request_data['password']
+    (result,userid) = validate_credentials(username,pswd)
+    if result == True:
+        s['logged in'] = True
+        s['user_id']=userid
+        s['user_name']= username
+        s['password'] = pswd
+        print(s)
+        return "Logged in successfully"
+    else:
+        abort(401)
+
 
 @app.route('/categories',methods=['GET'])
-def home():
+def categories():
     c_list=get_category_list()
     return jsonify(c_list)
 

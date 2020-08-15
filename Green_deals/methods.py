@@ -44,20 +44,32 @@ def check_valid_user(user_id,current_user):
     else:
         return False
 
-def formatted_cart_details(user_id):
-    result = []
+def get_products_list(user_id):
     product_list = []
-    user = session.query(User).filter_by(user_id=user_id).first()
     products = session.query(Cart).filter_by(user_id=user_id)
     for product in products:
         product_list.append(product.item_id)
+    return product_list
+
+def get_user_desired_quantity(user_id,item_id):
+    quantity = session.query(Cart).filter_by(user_id=user_id, item_id=item_id).first()
+    return quantity
+
+def get_seller_detail(seller_id):
+    seller = session.query(Seller).filter_by(id=seller_id).first()
+    return seller
+
+
+def formatted_cart_details(user_id):
+    result = []
+    product_list = get_products_list(user_id)
     items = session.query(Item).all()
     for item in items:
         print(item.id)
         if item.id in product_list:
             seller_id = item.seller_id
-            quantity = session.query(Cart).filter_by(user_id=user_id, item_id=item.id).first()
-            seller = session.query(Seller).filter_by(id=seller_id).first()
+            quantity = get_user_desired_quantity(user_id,item.id)
+            seller = get_seller_detail(seller_id)
             result.append(formatted_list(item, seller, quantity))
             print(result)
     return result
@@ -83,7 +95,6 @@ def insert_into_cart(product_id,quantity,user_id):
 
 def update_quantity(user_id,product_id,quantity):
     product = session.query(Cart).filter_by(user_id=user_id, item_id=product_id).one()
-    product.item_id = product_id
     product.desired_quantity = quantity
     session.add(product)
     session.commit()
