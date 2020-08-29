@@ -1,3 +1,5 @@
+from flask import jsonify
+
 from db import connect_db
 from models import User,Category,Item,Cart,Seller
 
@@ -18,6 +20,7 @@ def get_category_list():
         dict = {}
         dict['category_id'] = category.category_id
         dict['category_type'] = category.category_type
+        dict['image'] = category.image
         c_list.append(dict)
     return c_list
 
@@ -33,6 +36,7 @@ def get_items_list(category_id):
         dict['item_name'] = detail.name
         dict['item-price'] = int(detail.price)
         dict['available_quantity'] = detail.quantity
+        dict['image'] = detail.image
         item_list.append(dict)
     return item_list
 
@@ -76,6 +80,8 @@ def formatted_cart_details(user_id):
 
 def formatted_list(row,seller,quantity):
     dict ={}
+    dict['image'] = row.image
+    dict['Product-id'] = row.id
     dict['Product-name'] = row.name
     dict['Product-price'] = int(row.price) * quantity.desired_quantity
     dict['Quantity'] = quantity.desired_quantity

@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
+
 class User(Base):
     __tablename__ = 'users'
     user_id = Column(Integer,primary_key=True)
@@ -15,6 +16,7 @@ class Category(Base):
     __tablename__ = 'categories'
     category_id = Column(Integer,primary_key=True)
     category_type = Column(String)
+    image = Column(String)
     items = relationship('Item',backref='Category')
 
 class Item(Base):
@@ -25,6 +27,7 @@ class Item(Base):
     price = Column(Integer)
     seller_id = Column(Integer,ForeignKey('seller.id'))
     quantity = Column(Integer)
+    image = Column(String)
     ids = relationship('Cart',backref='Item')
 
 class Seller(Base):
