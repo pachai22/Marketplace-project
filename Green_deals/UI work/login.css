@@ -1,0 +1,77 @@
+@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css";
+
+body{
+    margin: 0;
+    padding:0;
+    font-family: sans-serif;
+    background: url("Bg.jpg.jpg") no-repeat;
+    background-size: cover;
+}
+
+h2{
+    margin-top: 10px;
+    font-size: 100px;
+    color: rgba(16, 233, 16, 0.795);
+    font-family: sans-serif;
+    font-style: italic;
+}
+
+.login-box{
+    border: chartreuse;
+    border-style: double;
+    background-color: black;
+    width: 350px;
+    height: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: 10px;
+    transform: translate(-50%,-50%);
+    color: white;
+}
+.login-box h1{
+    margin-left: 20px;
+    font-size: 40px;
+    border-bottom: 6px solid green;
+    margin-bottom: 50px;
+    padding: 13px 0;
+
+}
+.textbox{
+    width: 100%;
+    overflow: hidden;
+    font-size: 20px;
+    padding: 8px 0;
+    margin: 8px 0;
+    margin-left: 8px;
+    border-bottom: 1px solid green;
+}
+
+.textbox i{
+    width: 26px;
+    float: left;
+    text-align: center;
+}
+
+.textbox input{
+    border: none;
+    background: none;
+    outline:none;
+    color: white;
+    font-size: 16px;
+    width: 80%;
+    float: left;
+    margin: 0 10px;
+}
+
+.btn{
+    width: 80%;
+    margin-left: 30px;
+    align-content: center;
+    background: none;
+    border: 2px solid green;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
