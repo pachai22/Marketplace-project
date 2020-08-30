@@ -1,16 +1,15 @@
 
-function redirect(){
-    console.log("hi")
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
-    console.log(username)
-    console.log(password)
+function validate(username,password){
+    const user_name = username
+    const passwrd = password
+
     var cred={
-        'username':username,
-        'password':password
+        'username':user_name,
+        'password':passwrd
     }
     console.log(cred)
-    var todos = fetch("http://127.0.0.1:5000/login",{
+
+var todos = fetch("http://127.0.0.1:5000/login",{
         method:'POST',
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
@@ -29,6 +28,22 @@ function redirect(){
              }
         })
     })
+
+}
+
+function redirect(){
+    console.log("hi")
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    console.log(username)
+    console.log(password)
+    if (username==""||password=="")
+        alert("please fill out required field")
+    else{
+        validate(username,password)
+    }
+    
+    
 }
 //var button = document.getElementById("btn")
 //button.addEventListener("click", redirect())

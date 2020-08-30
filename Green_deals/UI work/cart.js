@@ -1,7 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
 const user_id =urlParams.get('user_id')
 if (user_id == null){
-alert("Please Login!")
 window.location.replace("E:/Frontend/Project/login.html")
 }
 
@@ -99,6 +98,7 @@ function remove(ids){
       res.json()
       .then((data)=>{
         alert(data['status'])
+        window.location.assign(`E:/Frontend/Project/cart.html?user_id=${user_id}`)
           console.log(data)
       })
   })  

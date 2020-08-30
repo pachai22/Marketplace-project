@@ -47,8 +47,17 @@ footer{
     margin-bottom: 30px;
 }
 
-#add{
-  margin-left: 50px;
+.add{
+  border: none;
+  vertical-align: middle;
+  color: black;
+  margin-left: 50%;
+  font-weight: bold;
+  margin-bottom: 10px;
+  background-color: rgb(27, 233, 27);
+}
+.add:hover{
+  background-color: green;
 }
 .card img{
   margin-left: 20px;

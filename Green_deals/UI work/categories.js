@@ -1,7 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
 const user_id =urlParams.get('user_id')
 if (user_id == null){
-alert("Please Login!")
 window.location.replace("E:/Frontend/Project/login.html")
 }
 

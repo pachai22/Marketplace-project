@@ -20,6 +20,11 @@ nav{
     width: 100%;
     margin-right: 0px;
 }
+
+nav .current{
+  background-color: green;
+  font-weight: bold;
+}
 footer{
     position: fixed;
     margin-top: 60px;
@@ -75,17 +80,33 @@ footer{
 }
 
 .update{
+  border: none;
   margin-left: 30px;
+  margin-right:10px;
+  background-color: cornflowerblue;
+  font-weight: bold;
   color: black;
   
 }
 
 .quan{
   color: black;
+  width: 20px;
+}
+.remove:hover{
+  background-color: rgb(238, 115, 14);
 }
 
+.update:hover{
+  background-color: rgb(54, 54, 230);
+}
 .remove{
+  border: none;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color:orangered;
   color:black;
+  font-weight: bold;
   margin-left: 40px;
 }
 

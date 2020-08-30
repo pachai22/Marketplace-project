@@ -2,7 +2,6 @@ const urlParams = new URLSearchParams(window.location.search);
 const id =urlParams.get('id')
 const user_id =urlParams.get('user_id')
 if (user_id == null){
-alert("Please Login!")
 window.location.replace("E:/Frontend/Project/login.html")
 }
 console.log(id)
@@ -89,7 +88,7 @@ function createElement(element){
   h4title.innerHTML=element['item_name']
   price.setAttribute('class','price')
   h4price.innerHTML="Rs :"+element['item-price']
-  add.setAttribute('id','add')
+  add.setAttribute('class','add')
   add.setAttribute('type','submit')
   add.setAttribute('value','Add-to-cart')
   add.setAttribute('id',element['item_id'])

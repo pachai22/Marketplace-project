@@ -20,6 +20,10 @@ nav{
     width: 100%;
     margin-right: 0px;
 }
+nav .current{
+  background-color: green;
+  font-weight: bold;
+}
 footer{
     position: fixed;
     margin-top: 60px;
