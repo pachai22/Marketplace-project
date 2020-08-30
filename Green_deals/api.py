@@ -60,6 +60,8 @@ def add_to_cart(id):
     result=insert_into_cart(product_id,quantity,user_id)
     if result== True:
         return jsonify({'status':'Added to cart successfully'})
+    elif result == "No":
+        return jsonify({'status':'Item is already in cart'})
     else:
         return jsonify({'status':'stock unavailable'})
 

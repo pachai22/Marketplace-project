@@ -1,5 +1,4 @@
 from flask import jsonify
-
 from db import connect_db
 from models import User,Category,Item,Cart,Seller
 
@@ -94,7 +93,11 @@ def insert_into_cart(product_id,quantity,user_id):
     if available_quantity < int(quantity):
         return False
     else:
-        product = Cart(user_id=user_id, item_id=product_id, desired_quantity=quantity)
+        avail = session.query(Cart).filter_by(user_id=user_id,item_id=product_id).first()
+        if avail != None:
+            return "No"
+        else:
+            product = Cart(user_id=user_id, item_id=product_id, desired_quantity=quantity)
         session.add(product)
         session.commit()
         return True
